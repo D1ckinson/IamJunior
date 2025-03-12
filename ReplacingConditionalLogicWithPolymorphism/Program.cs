@@ -21,7 +21,7 @@
             else if (systemId == "WebMoney")
                 Console.WriteLine("Вызов API WebMoney...");
             else if (systemId == "Card")
-                Console.WriteLine("Вызов API банка эмитера карты Card...");
+                Console.WriteLine("Вызов API банка эмиттера карты Card...");
 
             paymentHandler.ShowPaymentResult(systemId);
         }
@@ -55,5 +55,26 @@
 
             Console.WriteLine("Оплата прошла успешно!");
         }
+    }
+
+    public class PaymentSystem : IPaymentSystem
+    {
+        public PaymentSystem(string name)
+        {
+            Name = name;
+        }
+
+        public string Name { get; }
+
+        public void Pay()
+        {
+            Console.WriteLine();
+        }
+    }
+
+    public interface IPaymentSystem
+    {
+        public string Name { get; }
+        public void Pay();
     }
 }
