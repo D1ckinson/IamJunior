@@ -11,5 +11,5 @@
   <ItemGroup>
     <PackageReference Include="dotConnect.Express.for.SQLite" Version="6.4.193" />
   </ItemGroup>
-
+	
 </Project>
