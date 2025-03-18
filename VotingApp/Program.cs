@@ -7,7 +7,7 @@ namespace VotingApp
         {
             PassportForm passportForm = new();
             VoteConfirmer voteConfirmer = new();
-            VoteConfirmerPresenter presenter = new(passportForm, voteConfirmer);
+            VoteConfirmerPresenter presenter = new(passportForm);
 
             passportForm.AddButtonListener(presenter.ConfirmPassport);
 

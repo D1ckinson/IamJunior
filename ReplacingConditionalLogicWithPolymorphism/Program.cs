@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Collections.ObjectModel;
+using System.Runtime.CompilerServices;
 
 namespace ReplacingConditionalLogicWithPolymorphism
 {
@@ -13,62 +14,59 @@ namespace ReplacingConditionalLogicWithPolymorphism
     {
         static void Main()
         {
-            List<IPaymentSystem> paymentSystems =
+            IReadOnlyList<IPaymentSystem> paymentSystems =
                 [
                     new PaymentSystem("QIWI", "Перевод на страницу QIWI..."),
                     new PaymentSystem("WebMoney", "Вызов API WebMoney..."),
                     new PaymentSystem("Card", "Вызов API банка эмиттера карты Card..."),
                 ];
 
-            List<string> paymentSystemsNames = [.. paymentSystems.Select(system => system.Name)];
-
-            OrderForm orderForm = new(paymentSystemsNames);
+            OrderForm orderForm = new(paymentSystems);
             PaymentHandler paymentHandler = new();
 
             orderForm.ShowForm();
-            string systemName = orderForm.ReadInput();
+            string? systemName = ReadInput();
 
             IPaymentSystem? paymentSystem = paymentSystems.FirstOrDefault(paymentSystem => paymentSystem.Name == systemName);
-            paymentSystem.ThrowIfNull();
 
-
-            //if (systemName == "QIWI")
-            //    Console.WriteLine("Перевод на страницу QIWI...");
-            //else if (systemName == "WebMoney")
-            //    Console.WriteLine("Вызов API WebMoney...");
-            //else if (systemName == "Card")
-            //    Console.WriteLine("Вызов API банка эмиттера карты Card...");
+            if (systemName == "QIWI")
+                Console.WriteLine("перевод на страницу qiwi...");
+            else if (systemName == "webmoney")
+                Console.WriteLine("вызов api webmoney...");
+            else if (systemName == "card")
+                Console.WriteLine("вызов API банка эмиттера карты Card...");
 
             paymentHandler.ShowPaymentResult(paymentSystem);
+        }
+
+        static string? ReadInput()
+        {
+            Console.WriteLine("Какое системой вы хотите совершить оплату?");
+
+            return Console.ReadLine();
         }
     }
 
     public class OrderForm
     {
-        private List<string> _paymentSystemsNames;
+        private IReadOnlyList<IPaymentSystem> _paymentSystems;
 
-        public OrderForm(List<string> paymentSystemsNames)
+        public OrderForm(IReadOnlyList<IPaymentSystem> paymentSystems)
         {
-            paymentSystemsNames.ThrowIfNull();
-            paymentSystemsNames.ForEach(name => name.ThrowIfEmpty());
+            paymentSystems.ThrowIfNull();
 
-            _paymentSystemsNames = paymentSystemsNames;
+            foreach (IPaymentSystem system in paymentSystems)
+                system.ThrowIfNull();
+
+            _paymentSystems = paymentSystems;
         }
 
         public void ShowForm()
         {
             Console.WriteLine("Мы принимаем:");
-            _paymentSystemsNames.ForEach(Console.WriteLine);
-        }
 
-        public string ReadInput()
-        {
-            Console.WriteLine("Какое системой вы хотите совершить оплату?");
-
-            string? input = Console.ReadLine();
-            input.ThrowIfEmpty();
-
-            return input;
+            foreach (IPaymentSystem system in _paymentSystems)
+                Console.WriteLine(system.Name);
         }
     }
 
