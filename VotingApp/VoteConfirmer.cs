@@ -10,7 +10,7 @@ namespace VotingApp
         private const string Space = " ";
         private const int PassportLength = 10;
 
-        public string Confirm(string passport)
+        public static string Confirm(string passport)
         {
             if (IsPassportValid(ref passport, out string message) == false)
                 return message;
@@ -24,16 +24,15 @@ namespace VotingApp
                 connection.Open();
 
                 SQLiteDataAdapter sqLiteDataAdapter = new(new SQLiteCommand(commandText, connection));
+                DataTable dataTable = new();
 
-                DataTable dataTable1 = new();
-                DataTable dataTable2 = dataTable1;
-                sqLiteDataAdapter.Fill(dataTable2);
+                sqLiteDataAdapter.Fill(dataTable);
 
                 string result;
 
-                if (dataTable1.Rows.Count > 0)
+                if (dataTable.Rows.Count > 0)
                 {
-                    string confirmText = Convert.ToBoolean(dataTable1.Rows[0].ItemArray[1]) ? "ПРЕДОСТАВЛЕН" : "НЕ ПРЕДОСТАВЛЯЛСЯ";
+                    string confirmText = Convert.ToBoolean(dataTable.Rows[0].ItemArray[1]) ? "ПРЕДОСТАВЛЕН" : "НЕ ПРЕДОСТАВЛЯЛСЯ";
                     result = $"По паспорту «{passport}» доступ к бюллетеню на дистанционном электронном голосовании {confirmText}";
                 }
                 else
