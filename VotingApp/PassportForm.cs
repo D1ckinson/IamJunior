@@ -1,26 +1,16 @@
-﻿using System.ComponentModel;
-
-namespace VotingApp
+﻿﻿namespace VotingApp
 {
-    public class PassportForm : Form
+    partial class PassportForm
     {
-        private IContainer components = null;
-        private Button _confirmButton;
-        private TextBox _passportTextbox;
-        private TextBox _textResult;
-        private TextBox _infoTextBox1;
+        /// <summary>
+        ///  Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
 
-        public PassportForm()
-        {
-            InitializeComponent();
-        }
-
-        public void AddButtonListener(EventHandler eventHandler)
-        {
-            eventHandler.ThrowIfNull();
-            _confirmButton.Click += eventHandler;
-        }
-
+        /// <summary>
+        ///  Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -39,7 +29,7 @@ namespace VotingApp
         {
             _confirmButton = new Button();
             _passportTextbox = new TextBox();
-            _textResult = new TextBox();
+            _replyTextbox = new TextBox();
             _infoTextBox1 = new TextBox();
             SuspendLayout();
             // 
@@ -61,11 +51,11 @@ namespace VotingApp
             // 
             // _textResult
             // 
-            _textResult.Enabled = false;
-            _textResult.Location = new Point(240, 246);
-            _textResult.Name = "_textResult";
-            _textResult.Size = new Size(342, 25);
-            _textResult.TabIndex = 2;
+            _replyTextbox.Enabled = false;
+            _replyTextbox.Location = new Point(240, 246);
+            _replyTextbox.Name = "_textResult";
+            _replyTextbox.Size = new Size(342, 25);
+            _replyTextbox.TabIndex = 2;
             // 
             // _infoTextBox1
             // 
@@ -82,7 +72,7 @@ namespace VotingApp
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
             Controls.Add(_infoTextBox1);
-            Controls.Add(_textResult);
+            Controls.Add(_replyTextbox);
             Controls.Add(_passportTextbox);
             Controls.Add(_confirmButton);
             Name = "Form1";
@@ -92,5 +82,10 @@ namespace VotingApp
         }
 
         #endregion
+
+        private Button _confirmButton;
+        private TextBox _passportTextbox;
+        private TextBox _replyTextbox;
+        private TextBox _infoTextBox1;
     }
 }
