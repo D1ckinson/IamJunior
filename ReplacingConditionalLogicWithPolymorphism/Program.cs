@@ -1,4 +1,6 @@
-﻿namespace ReplacingConditionalLogicWithPolymorphism
+﻿using System.Runtime.CompilerServices;
+
+namespace ReplacingConditionalLogicWithPolymorphism
 {
     //Сейчас система не готова к расширению.
     //К сожалению при добавление нового способа оплаты,
@@ -11,47 +13,83 @@
     {
         static void Main()
         {
-            var orderForm = new OrderForm();
-            var paymentHandler = new PaymentHandler();
+            List<IPaymentSystem> paymentSystems =
+                [
+                    new PaymentSystem("QIWI", "Перевод на страницу QIWI..."),
+                    new PaymentSystem("WebMoney", "Вызов API WebMoney..."),
+                    new PaymentSystem("Card", "Вызов API банка эмиттера карты Card..."),
+                ];
 
-            var systemId = orderForm.ShowForm();
+            List<string> paymentSystemsNames = [.. paymentSystems.Select(system => system.Name)];
 
-            if (systemId == "QIWI")
-                Console.WriteLine("Перевод на страницу QIWI...");
-            else if (systemId == "WebMoney")
-                Console.WriteLine("Вызов API WebMoney...");
-            else if (systemId == "Card")
-                Console.WriteLine("Вызов API банка эмиттера карты Card...");
+            OrderForm orderForm = new(paymentSystemsNames);
+            PaymentHandler paymentHandler = new();
 
-            paymentHandler.ShowPaymentResult(systemId);
+            orderForm.ShowForm();
+            string systemName = orderForm.ReadInput();
+
+            IPaymentSystem? paymentSystem = paymentSystems.FirstOrDefault(paymentSystem => paymentSystem.Name == systemName);
+            paymentSystem.ThrowIfNull();
+
+
+            //if (systemName == "QIWI")
+            //    Console.WriteLine("Перевод на страницу QIWI...");
+            //else if (systemName == "WebMoney")
+            //    Console.WriteLine("Вызов API WebMoney...");
+            //else if (systemName == "Card")
+            //    Console.WriteLine("Вызов API банка эмиттера карты Card...");
+
+            paymentHandler.ShowPaymentResult(paymentSystem);
         }
     }
 
     public class OrderForm
     {
-        public string ShowForm()
-        {
-            Console.WriteLine("Мы принимаем: QIWI, WebMoney, Card");
+        private List<string> _paymentSystemsNames;
 
-            //симуляция веб интерфейса
+        public OrderForm(List<string> paymentSystemsNames)
+        {
+            paymentSystemsNames.ThrowIfNull();
+            paymentSystemsNames.ForEach(name => name.ThrowIfEmpty());
+
+            _paymentSystemsNames = paymentSystemsNames;
+        }
+
+        public void ShowForm()
+        {
+            Console.WriteLine("Мы принимаем:");
+            _paymentSystemsNames.ForEach(Console.WriteLine);
+        }
+
+        public string ReadInput()
+        {
             Console.WriteLine("Какое системой вы хотите совершить оплату?");
 
-            return Console.ReadLine();
+            string? input = Console.ReadLine();
+            input.ThrowIfEmpty();
+
+            return input;
         }
     }
 
     public class PaymentHandler
     {
-        public void ShowPaymentResult(string systemId)
-        {
-            Console.WriteLine($"Вы оплатили с помощью {systemId}");
 
-            if (systemId == "QIWI")
-                Console.WriteLine("Проверка платежа через QIWI...");
-            else if (systemId == "WebMoney")
-                Console.WriteLine("Проверка платежа через WebMoney...");
-            else if (systemId == "Card")
-                Console.WriteLine("Проверка платежа через Card...");
+
+        public PaymentHandler()
+        {
+        }
+
+        public void ShowPaymentResult(IPaymentSystem paymentSystem)
+        {
+            Console.WriteLine($"Вы оплатили с помощью {paymentSystem.Name}");
+
+            //if (paymentSystem == "QIWI")
+            //    Console.WriteLine("Проверка платежа через QIWI...");
+            //else if (paymentSystem == "WebMoney")
+            //    Console.WriteLine("Проверка платежа через WebMoney...");
+            //else if (paymentSystem == "Card")
+            //    Console.WriteLine("Проверка платежа через Card...");
 
             Console.WriteLine("Оплата прошла успешно!");
         }
@@ -59,22 +97,38 @@
 
     public class PaymentSystem : IPaymentSystem
     {
-        public PaymentSystem(string name)
+        private readonly string _confirmPay;
+
+        public PaymentSystem(string name, string confirmPay)
         {
+            name.ThrowIfEmpty();
+            confirmPay.ThrowIfEmpty();
+
             Name = name;
+            _confirmPay = confirmPay;
         }
 
         public string Name { get; }
 
-        public void Pay()
-        {
-            Console.WriteLine();
-        }
+        public void ConfirmPay() =>
+            Console.WriteLine(_confirmPay);
     }
 
     public interface IPaymentSystem
     {
         public string Name { get; }
-        public void Pay();
+        public void ConfirmPay();
+    }
+
+    public static class ThrowHelper
+    {
+        public static void ThrowIfLessThan<T>(this T argument, T limit, [CallerArgumentExpression(nameof(argument))] string? name = null) where T : IComparable<T> =>
+            ArgumentOutOfRangeException.ThrowIfLessThan(argument, limit, name);
+
+        public static void ThrowIfNull<T>(this T argument, [CallerArgumentExpression(nameof(argument))] string? name = null) where T : class =>
+            ArgumentNullException.ThrowIfNull(argument, name);
+
+        public static void ThrowIfEmpty(this string argument, [CallerArgumentExpression(nameof(argument))] string? name = null) =>
+            ArgumentException.ThrowIfNullOrWhiteSpace(argument, name);
     }
 }

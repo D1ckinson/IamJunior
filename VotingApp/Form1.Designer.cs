@@ -1,16 +1,26 @@
-﻿namespace VotingApp
-{
-    partial class VoteConfirmerForm
-    {
-        /// <summary>
-        ///  Required designer variable.
-        /// </summary>
-        private System.ComponentModel.IContainer components = null;
+﻿using System.ComponentModel;
 
-        /// <summary>
-        ///  Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+namespace VotingApp
+{
+    public class PassportForm : Form
+    {
+        private IContainer components = null;
+        private Button _confirmButton;
+        private TextBox _passportTextbox;
+        private TextBox _textResult;
+        private TextBox _infoTextBox1;
+
+        public PassportForm()
+        {
+            InitializeComponent();
+        }
+
+        public void AddButtonListener(EventHandler eventHandler)
+        {
+            eventHandler.ThrowIfNull();
+            _confirmButton.Click += eventHandler;
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -41,7 +51,6 @@
             _confirmButton.TabIndex = 0;
             _confirmButton.Text = "Подтвердить";
             _confirmButton.UseVisualStyleBackColor = true;
-            _confirmButton.Click += OnButtonClick;
             // 
             // _passportTextbox
             // 
@@ -83,10 +92,5 @@
         }
 
         #endregion
-
-        private Button _confirmButton;
-        private TextBox _passportTextbox;
-        private TextBox _textResult;
-        private TextBox _infoTextBox1;
     }
 }

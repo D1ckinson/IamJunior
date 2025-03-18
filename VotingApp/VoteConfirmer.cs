@@ -10,18 +10,10 @@ namespace VotingApp
         private const string Space = " ";
         private const int PassportLength = 10;
 
-        public string ConfirmPassport(string passport)
+        public string Confirm(string passport)
         {
-            passport.ThrowIfEmpty();
-            passport = passport.Replace(Space, string.Empty);
-
-            string result=string.Empty;
-
-            if (passport == string.Empty)
-                return "Введите серию и номер паспорта";
-
-            if (passport.Length < PassportLength)
-                return "Неверный формат серии или номера паспорта";
+            if (IsPassportValid(ref passport, out string message) == false)
+                return message;
 
             string commandText = string.Format("select * from passports where num='{0}' limit 1;", ComputeSha256Hash(passport));
             string connectionString = string.Format("Data Source=" + Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\db.sqlite");
@@ -35,8 +27,9 @@ namespace VotingApp
 
                 DataTable dataTable1 = new();
                 DataTable dataTable2 = dataTable1;
-
                 sqLiteDataAdapter.Fill(dataTable2);
+
+                string result;
 
                 if (dataTable1.Rows.Count > 0)
                 {
@@ -49,19 +42,40 @@ namespace VotingApp
                 }
 
                 connection.Close();
+
+                return result;
             }
             catch (SQLiteException exception)
             {
                 if ((int)exception.ErrorCode != 1)
-                    return result;
+                    return exception.Message;
 
                 return "Файл db.sqlite не найден. Положите файл в папку вместе с exe.";
             }
-
-            return result;
         }
 
-        private string ComputeSha256Hash(string rawData)
+        private static bool IsPassportValid(ref string passport, out string message)
+        {
+            message = string.Empty;
+
+            if (string.IsNullOrEmpty(passport))
+            {
+                message = "Введите серию и номер паспорта";
+                return false;
+            }
+
+            passport = passport.Replace(Space, string.Empty);
+
+            if (passport.Length < PassportLength)
+            {
+                message = "Введите серию и номер паспорта";
+                return false;
+            }
+
+            return true;
+        }
+
+        private static string ComputeSha256Hash(string rawData)
         {
             rawData.ThrowIfNull(nameof(rawData));
 
