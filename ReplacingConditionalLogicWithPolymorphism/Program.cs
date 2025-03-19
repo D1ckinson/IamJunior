@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 
 namespace ReplacingConditionalLogicWithPolymorphism
 {
@@ -29,10 +28,11 @@ namespace ReplacingConditionalLogicWithPolymorphism
 
             IPaymentSystem? paymentSystem = paymentSystems.FirstOrDefault(paymentSystem => paymentSystem.Name == systemName);
 
+
             if (systemName == "QIWI")
-                Console.WriteLine("перевод на страницу qiwi...");
-            else if (systemName == "webmoney")
-                Console.WriteLine("вызов api webmoney...");
+                Console.WriteLine("перевод на страницу QIWI...");
+            else if (systemName == "WebMoney")
+                Console.WriteLine("вызов api WebMoney...");
             else if (systemName == "card")
                 Console.WriteLine("вызов API банка эмиттера карты Card...");
 
@@ -49,7 +49,7 @@ namespace ReplacingConditionalLogicWithPolymorphism
 
     public class OrderForm
     {
-        private IReadOnlyList<IPaymentSystem> _paymentSystems;
+        private readonly IReadOnlyList<IPaymentSystem> _paymentSystems;
 
         public OrderForm(IReadOnlyList<IPaymentSystem> paymentSystems)
         {
@@ -82,12 +82,12 @@ namespace ReplacingConditionalLogicWithPolymorphism
         {
             Console.WriteLine($"Вы оплатили с помощью {paymentSystem.Name}");
 
-            //if (paymentSystem == "QIWI")
-            //    Console.WriteLine("Проверка платежа через QIWI...");
-            //else if (paymentSystem == "WebMoney")
-            //    Console.WriteLine("Проверка платежа через WebMoney...");
-            //else if (paymentSystem == "Card")
-            //    Console.WriteLine("Проверка платежа через Card...");
+            if (paymentSystem.Name == "QIWI")
+                Console.WriteLine("Проверка платежа через QIWI...");
+            else if (paymentSystem.Name == "WebMoney")
+                Console.WriteLine("Проверка платежа через WebMoney...");
+            else if (paymentSystem.Name == "Card")
+                Console.WriteLine("Проверка платежа через Card...");
 
             Console.WriteLine("Оплата прошла успешно!");
         }

@@ -1,3 +1,5 @@
+using System.Security.Cryptography;
+
 namespace VotingApp
 {
     public static class Program
@@ -5,9 +7,11 @@ namespace VotingApp
         [STAThread]
         static void Main()
         {
+            Hasher hasher = new(SHA256.Create());
+
             PassportForm passportForm = new();
-            VoteConfirmer voteConfirmer = new();
-            VoteConfirmerPresenter presenter = new(passportForm);
+            VoteConfirmer voteConfirmer = new(hasher);
+            VoteConfirmerPresenter presenter = new(passportForm, voteConfirmer);
 
             passportForm.AddButtonListener(presenter.ConfirmPassport);
 

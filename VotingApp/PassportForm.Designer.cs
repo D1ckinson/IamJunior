@@ -17,7 +17,6 @@ namespace VotingApp
         public void AddButtonListener(EventHandler eventHandler)
         {
             eventHandler.ThrowIfNull();
-
             _confirmButton.Click += eventHandler;
         }
 
