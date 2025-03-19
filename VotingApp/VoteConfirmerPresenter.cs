@@ -1,11 +1,7 @@
-﻿using System.Data;
-
-namespace VotingApp
+﻿namespace VotingApp
 {
     public class VoteConfirmerPresenter
     {
-        private const int Zero = 0;
-
         private readonly PassportForm _passportForm;
         private readonly VoteConfirmer _voteConfirmer;
 
@@ -21,16 +17,17 @@ namespace VotingApp
         public void ConfirmPassport(object? sender, EventArgs e)
         {
             Passport passport = new(_passportForm.Passport);
-            DataTable dataTable = _voteConfirmer.GetPassportVoteInfo(passport);
 
-            if (dataTable.Rows.Count == Zero)
+            bool? result = _voteConfirmer.GetPassportVoteInfo(passport);
+
+            if (result == null)
             {
                 _passportForm.Reply($"Паспорт «{passport.SerialNumber}» в списке участников дистанционного голосования НЕ НАЙДЕН");
 
                 return;
             }
 
-            string confirmText = Convert.ToBoolean(dataTable.Rows[0].ItemArray[1]) ? "ПРЕДОСТАВЛЕН" : "НЕ ПРЕДОСТАВЛЯЛСЯ";
+            string confirmText = (bool)result ? "ПРЕДОСТАВЛЕН" : "НЕ ПРЕДОСТАВЛЯЛСЯ";
             _passportForm.Reply($"По паспорту «{passport.SerialNumber}» доступ к бюллетеню на дистанционном электронном голосовании {confirmText}");
         }
     }

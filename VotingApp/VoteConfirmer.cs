@@ -6,6 +6,9 @@ namespace VotingApp
 {
     public class VoteConfirmer
     {
+        private const int Zero = 0;
+        private const int One = 1;
+
         private readonly IHasher _hasher;
 
         public VoteConfirmer(IHasher hasher)
@@ -14,7 +17,7 @@ namespace VotingApp
             _hasher = hasher;
         }
 
-        public DataTable GetPassportVoteInfo(Passport passport)
+        public bool? GetPassportVoteInfo(Passport passport)
         {
             passport.ThrowIfNull();
 
@@ -29,11 +32,14 @@ namespace VotingApp
                 sqLiteDataAdapter.Fill(dataTable);
                 connection.Close();
 
-                return dataTable;
+                if (dataTable.Rows.Count == Zero)
+                    return null;
+
+                return Convert.ToBoolean(dataTable.Rows[Zero].ItemArray[One]);
             }
             catch (SQLiteException exception)
             {
-                if ((int)exception.ErrorCode != 1)
+                if ((int)exception.ErrorCode != One)
                     throw;
 
                 throw new FileNotFoundException("Файл db.sqlite не найден. Положите файл в папку вместе с exe.");
