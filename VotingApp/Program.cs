@@ -8,12 +8,12 @@ namespace VotingApp
         static void Main()
         {
             Hasher hasher = new(SHA256.Create());
-
-            PassportForm passportForm = new();
             VoteConfirmer voteConfirmer = new(hasher);
-            VoteConfirmerPresenter presenter = new(passportForm, voteConfirmer);
 
-            passportForm.AddButtonListener(presenter.ConfirmPassport);
+            VoteConfirmerPresenterFactory presenterFactory = new(voteConfirmer);
+            PassportForm passportForm = new(presenterFactory);
+
+            passportForm.CreatePresenter();
 
             Application.Run(passportForm);
             ApplicationConfiguration.Initialize();

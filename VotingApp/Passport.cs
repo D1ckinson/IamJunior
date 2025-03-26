@@ -2,16 +2,15 @@
 {
     public class Passport
     {
-        private const string Space = " ";
+        private const char Space = ' ';
         private const int SerialNumberLength = 10;
 
         public Passport(string serialNumber)
         {
             serialNumber.ThrowIfEmpty();
-            serialNumber = serialNumber.Replace(Space, string.Empty);
+            serialNumber = serialNumber.Trim(Space);
 
-            if (serialNumber.Length < SerialNumberLength)
-                throw new ArgumentOutOfRangeException(serialNumber);
+            serialNumber.Length.ThrowIfNotEqual(SerialNumberLength);
 
             SerialNumber = serialNumber;
         }

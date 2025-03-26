@@ -1,68 +1,28 @@
-﻿using Devart.Data.SQLite;
-using System.Data;
-using System.Reflection;
-
-namespace VotingApp
+﻿namespace VotingApp
 {
-    public class VoteConfirmer
+    public class VoteConfirmer : IModel
     {
-        private const int Zero = 0;
-        private const int One = 1;
-
         private readonly IHasher _hasher;
+        private readonly Repository _repository;
 
         public VoteConfirmer(IHasher hasher)
         {
             hasher.ThrowIfNull();
+
             _hasher = hasher;
+            _repository = new();
         }
 
-        public bool? GetPassportVoteInfo(Passport passport)
+        public bool? Process(Passport passport)
         {
             passport.ThrowIfNull();
 
-            try
-            {
-                SQLiteConnection connection = new(GetConnectionString());
-                connection.Open();
+            Citizen? citizen = _repository.GetCitizen(passport, _hasher.Hash(passport.SerialNumber));
 
-                SQLiteDataAdapter sqLiteDataAdapter = new(GetCommand(connection, passport.SerialNumber));
-                DataTable dataTable = new();
+            if (citizen is null)
+                return null;
 
-                sqLiteDataAdapter.Fill(dataTable);
-                connection.Close();
-
-                if (dataTable.Rows.Count == Zero)
-                    return null;
-
-                return Convert.ToBoolean(dataTable.Rows[Zero].ItemArray[One]);
-            }
-            catch (SQLiteException exception)
-            {
-                if ((int)exception.ErrorCode != One)
-                    throw;
-
-                throw new FileNotFoundException("Файл db.sqlite не найден. Положите файл в папку вместе с exe.");
-            }
-        }
-
-        private static string GetConnectionString()
-        {
-            string? location = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            string path = Path.Combine(location, "db.sqlite");
-
-            return $"Data Source={path}";
-        }
-
-        private SQLiteCommand GetCommand(SQLiteConnection connection, string serialNumber)
-        {
-            string commandParameter = "@num";
-            string commandText = $"SELECT * FROM passports WHERE num = {commandParameter} LIMIT 1;";
-
-            SQLiteCommand command = new(commandText, connection);
-            command.Parameters.AddWithValue(commandParameter, _hasher.Hash(serialNumber));
-
-            return command;
+            return citizen.HasVoted;
         }
     }
 }
