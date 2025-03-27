@@ -1,5 +1,4 @@
-﻿
-namespace ArgumentsFlagsAreBad
+﻿namespace ArgumentsFlagsAreBad
 {
     internal class Program
     {
@@ -7,15 +6,12 @@ namespace ArgumentsFlagsAreBad
         private Effect _effects;
         private Pool _pool;
 
-        private static void Main()
-        {
-            Console.WriteLine("Hello, World!");
-        }
+        private static void Main() { }
 
         public void Enable()
         {
-            _isEnabled = true;
             _effects.Enable();
+            _isEnabled = true;
         }
 
         public void Disable()
@@ -25,19 +21,14 @@ namespace ArgumentsFlagsAreBad
         }
     }
 
-    internal class Pool
+    public class Pool
     {
-        internal void Free(object @object)
-        {
-            throw new NotImplementedException();
-        }
+        public void Free(object @object) =>
+            ArgumentNullException.ThrowIfNull(@object);
     }
 
-    internal class Effect
+    public class Effect
     {
-        internal void Enable()
-        {
-            throw new NotImplementedException();
-        }
+        public void Enable() { }
     }
 }
