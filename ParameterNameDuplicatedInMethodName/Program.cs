@@ -7,7 +7,7 @@ namespace ParameterNameDuplicatedInMethodName
     {
         private readonly IEnumerable<string> _collection = [];
 
-        private static void Main() { }
+        public static void Main() { }
 
         public void Shoot(IDamageable damageable)
         {
