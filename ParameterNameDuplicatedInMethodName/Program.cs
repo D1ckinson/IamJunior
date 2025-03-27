@@ -5,6 +5,8 @@ namespace ParameterNameDuplicatedInMethodName
 {
     internal class Program
     {
+        private const int One = 1;
+
         private readonly IEnumerable<string> _collection = [];
 
         public static void Main() { }
@@ -19,7 +21,7 @@ namespace ParameterNameDuplicatedInMethodName
         {
             index.ThrowIfNegative();
 
-            int maxIndex = _collection.Count() - 1;
+            int maxIndex = _collection.Count() - One;
             index.ThrowIfGreaterThan(maxIndex);
 
             return _collection.ElementAt(index);
