@@ -5,15 +5,15 @@
         static void Main()
         {
             FactoryBroker factoryBroker = new();
-            OrderForm orderForm = new(factoryBroker);
+            OrderForm orderForm = new(factoryBroker.GetAvailableSystems());
 
             string? systemName = orderForm.ShowForm();
             systemName.ThrowIfEmpty();
 
-            PaymentSystem paymentSystem = factoryBroker.Create(systemName);
+            IFactory<IPaymentSystem> factory = factoryBroker.GiveFactory(systemName);
 
-            paymentSystem.TransferToPaymentPage();
-            paymentSystem.ShowPaymentResult();
+            PaymentHandler paymentHandler = new();
+            paymentHandler.Handle(factory);
         }
     }
 }

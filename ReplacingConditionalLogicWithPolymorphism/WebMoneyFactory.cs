@@ -1,14 +1,8 @@
 ﻿namespace ReplacingConditionalLogicWithPolymorphism
 {
-    public class WebMoneyFactory : IFactory<PaymentSystem>
+    public class WebMoneyFactory : IFactory<IPaymentSystem>
     {
-        private readonly string _name = "WebMoney";
-
-        public PaymentSystem Create()
-        {
-            PaymentHandler paymentHandler = new(_name, "Проверка платежа через WebMoney...");
-
-            return new(_name, "Вызов API WebMoney...", paymentHandler);
-        }
+        public IPaymentSystem Create() =>
+            new WebMoneySystem();
     }
 }

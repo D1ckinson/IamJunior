@@ -2,7 +2,7 @@
 {
     public class FactoryBroker
     {
-        private readonly Dictionary<string, IFactory<PaymentSystem>> _factories;
+        private readonly Dictionary<string, IFactory<IPaymentSystem>> _factories;
 
         public FactoryBroker()
         {
@@ -17,14 +17,14 @@
         public IEnumerable<string> GetAvailableSystems() =>
             _factories.Keys;
 
-        public PaymentSystem Create(string paymentSystemName)
+        public IFactory<IPaymentSystem> GiveFactory(string paymentSystemName)
         {
             paymentSystemName.ThrowIfEmpty();
 
             if (_factories.ContainsKey(paymentSystemName) == false)
                 throw new ArgumentException(paymentSystemName);
 
-            return _factories[paymentSystemName].Create();
+            return _factories[paymentSystemName];
         }
     }
 }

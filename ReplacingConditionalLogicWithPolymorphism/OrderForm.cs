@@ -2,20 +2,19 @@
 {
     public class OrderForm
     {
-        private readonly FactoryBroker _factoryBroker;
+        private readonly IEnumerable<string> _availableSystems;
 
-        public OrderForm(FactoryBroker factoryBroker)
+        public OrderForm(IEnumerable<string> availableSystems)
         {
-            factoryBroker.ThrowIfNull();
-            _factoryBroker = factoryBroker;
+            availableSystems.ThrowIfNull();
+            _availableSystems = availableSystems;
         }
 
         public string? ShowForm()
         {
             Console.WriteLine("Мы принимаем:");
-            IEnumerable<string> names = _factoryBroker.GetAvailableSystems();
 
-            foreach (string name in names)
+            foreach (string name in _availableSystems)
                 Console.WriteLine(name);
 
             Console.WriteLine("Какое системой вы хотите совершить оплату?");

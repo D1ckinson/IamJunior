@@ -1,14 +1,8 @@
 ﻿namespace ReplacingConditionalLogicWithPolymorphism
 {
-    public class CardFactory : IFactory<PaymentSystem>
+    public class CardFactory : IFactory<IPaymentSystem>
     {
-        private readonly string _name = "Card";
-
-        public PaymentSystem Create()
-        {
-            PaymentHandler paymentHandler = new(_name, "Проверка платежа через Card...");
-
-            return new(_name, "Вызов API банка эмиттера карты Card...", paymentHandler);
-        }
+        public IPaymentSystem Create() =>
+            new CardSystem();
     }
 }

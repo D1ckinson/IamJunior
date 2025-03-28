@@ -2,19 +2,17 @@
 {
     public class PaymentHandler
     {
-        private readonly string _systemName;
-        private readonly string _handleText;
-
-        public PaymentHandler(string systemName, string handleText)
+        public void Handle(IFactory<IPaymentSystem> factory)
         {
-            systemName.ThrowIfNull();
-            handleText.ThrowIfNull();
+            factory.ThrowIfNull();
 
-            _systemName = systemName;
-            _handleText = handleText;
+            IPaymentSystem paymentSystem = factory.Create();
+            paymentSystem.TransferToPaymentPage();
+
+            ShowPaymentResult(paymentSystem.Name);
         }
 
-        public void ShowPaymentResult() =>
-            Console.WriteLine($"Вы оплатили с помощью {_systemName}\n{_handleText}\nОплата прошла успешно!");
+        private void ShowPaymentResult(string systemName) =>
+            Console.WriteLine($"Вы оплатили с помощью {systemName}\nПроверка платежа через {systemName}...\nОплата прошла успешно!");
     }
 }
